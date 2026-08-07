@@ -59,10 +59,29 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
       </joint>
 
       <gazebo reference="${wheel_prefix}_wheel_link">
-        <!-- High for no longitudinal slip (propulsion) -->
+        <!-- High for no longitudinal slip (propulsion). Never realized as 200:
+             gazebo combines two contacting surfaces by taking the SMALLER
+             coefficient, so this says "the wheel is never the longitudinal
+             limit, the GROUND decides", which is what makes a friction patch's
+             mu mean anything in the rolling direction. Leave it high. -->
         <mu1>200.0</mu1>
-        <!-- High for lateral grip during turns (prevents sliding) -->
-        <mu2>0.7</mu2>
+        <!-- Lateral grip. This one IS realized, and it sets the knee below which
+             the robot cannot steer at all: a skid-steer yaws by gripping
+             longitudinally while scrubbing sideways, so it needs mu_long > mu_lat,
+             and an isotropic ground below this value caps BOTH channels and
+             collapses the ratio to 1:1.
+
+             Was 0.7 (concrete-ish) until 2026-08-07. That put the knee at the top
+             of the realistic range for rubber, so EVERY plausible indoor floor
+             (linoleum 0.45, wet tile 0.30, ice 0.05) landed at or below it and
+             simulated "loses steering" rather than "slides". 0.45 moves the knee
+             to linoleum, making tile and linoleum representable while reserving
+             the collapse for ice, where a real skid-steer genuinely cannot steer.
+
+             tools/sweep_ground_mu.sh measures the resulting chi-vs-ground-mu
+             curve; re-run it if this changes, and re-measure
+             PlannerConfig.slip_chi, which is a property of the resulting plant. -->
+        <mu2>0.45</mu2>
         <!-- Small torsional slip for realism/stability -->
         <slip1>0.01</slip1>
         <!-- Lateral slip; tune higher (0.1) if turns feel too sticky -->
