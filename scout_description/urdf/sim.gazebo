@@ -72,6 +72,10 @@
     </sensor>
   </gazebo>
 
+  <!-- The RGB and depth cameras are the costliest renders (30 + 90 Hz) and only
+       SLAM consumes them; the static-map fixture keeps the lidar for amcl and
+       drops these with sim_cameras:=false. -->
+  <xacro:if value="${'$(arg sim_cameras)'}">
   <gazebo reference="d435_camera_color_frame">
     <sensor name="rgb_camera" type="camera">
       <gz_frame_id>${frame_prefix}d435_camera_color_optical_frame</gz_frame_id>
@@ -140,6 +144,7 @@
       </camera>
     </sensor>
   </gazebo>
+  </xacro:if>
   </xacro:if>
 
   <gazebo reference="imu_link">

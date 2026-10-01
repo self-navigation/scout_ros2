@@ -6,6 +6,8 @@
   <!-- Rendering sensors (lidar + RGB/depth cameras). Default on for the nav stack;
        RL-corrector training sets sim_sensors:=false to drop the rendering cost. -->
   <xacro:arg name="sim_sensors" default="true"/>
+  <!-- Cameras only (lidar unaffected); follows sim_sensors unless set. -->
+  <xacro:arg name="sim_cameras" default="$(arg sim_sensors)"/>
   <xacro:arg name="controller_file" default="diff_drive_controller.yaml"/>
   <xacro:include filename="$(find scout_description)/urdf/wheel.xacro"/>
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />

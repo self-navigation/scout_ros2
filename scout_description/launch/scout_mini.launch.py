@@ -39,6 +39,12 @@ def generate_launch_description():
             description="Spawn the rendering sensors (lidar + RGB/depth cameras) in "
             "sim. Set false for RL-corrector training to drop the rendering cost.",
         ),
+        DeclareLaunchArgument(
+            "sim_cameras",
+            default_value=LaunchConfiguration("sim_sensors"),
+            description="Spawn the RGB/depth cameras (lidar unaffected). Follows "
+            "sim_sensors by default; the static-map fixture sets it false.",
+        ),
     ]
 
     namespace = LaunchConfiguration("namespace")
@@ -46,6 +52,7 @@ def generate_launch_description():
     controller_file = LaunchConfiguration("controller_file")
     sim = LaunchConfiguration("sim")
     sim_sensors = LaunchConfiguration("sim_sensors")
+    sim_cameras = LaunchConfiguration("sim_cameras")
 
     model_name = "scout_mini.xacro"
     robot_description_content = Command(
@@ -65,6 +72,8 @@ def generate_launch_description():
             sim,
             " sim_sensors:=",
             sim_sensors,
+            " sim_cameras:=",
+            sim_cameras,
         ]
     )
     robot_description = ParameterValue(robot_description_content, value_type=str)
